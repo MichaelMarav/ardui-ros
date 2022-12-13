@@ -32,9 +32,9 @@ Remapper::Remapper(ros::NodeHandle nh)
 /*
  * The map() function from arduino 
  */
-int Remapper::remap(const float & input,const float & in_min, const float & in_max,const float & out_min,const float & out_max)
+float Remapper::remap(const float & input,const float & in_min, const float & in_max,const float & out_min,const float & out_max)
 {
-    return static_cast<int>( (input-in_min)*(out_max-out_min)/(in_max-in_min) + out_min );
+    return static_cast<float>( (input-in_min)*(out_max-out_min)/(in_max-in_min) + out_min );
 }
 
 
