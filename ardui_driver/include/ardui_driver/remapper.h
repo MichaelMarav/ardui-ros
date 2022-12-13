@@ -23,7 +23,7 @@ class Remapper
         ardui_msgs::AnalogFeedback analog2angles_msg;
         ardui_msgs::JointStates joint_msg;     // Stores the servo positions in angles
        
-        int remap(const float & input,const float & in_min,const float & in_max,const float & out_min,const float & out_max);
+        float remap(const float & input,const float & in_min,const float & in_max,const float & out_min,const float & out_max);
 
     
     public:
