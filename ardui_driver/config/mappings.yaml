@@ -1,0 +1,10 @@
+# MIN: 0 degrees   --> 500 micros (PWM) --> 976 analog_read
+# MAX: 300 degrees --> 2400micros (PWM) --> 73 analog_read
+analog_min: 976
+analog_max: 73
+
+micro_min: 500
+micro_max: 2400
+
+angles_min: 0
+angles_max: 300

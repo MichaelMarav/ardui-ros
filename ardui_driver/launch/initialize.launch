@@ -1,0 +1,5 @@
+<launch>
+   <node name= "initialize_servos" pkg="ecattie_driver" type="initialize_servos.py" output="screen">
+            <rosparam file ="$(find ecattie_driver)/config/servo_goal_state.yaml" command = "load" />
+   </node>
+</launch>    
