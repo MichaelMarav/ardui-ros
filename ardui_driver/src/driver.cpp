@@ -19,7 +19,7 @@ Driver::Driver(ros::NodeHandle nh):remapper(nh)
 
 
     joint_msg.angles.resize(remapper.NUM_SERVOS);
-      
+    analog_msg.analog_feedback.resize(remapper.NUM_SERVOS);
     ros_loop();
 }
 
@@ -50,12 +50,13 @@ void Driver::ros_loop()
         // TODO: Check if needed to split the below commands into functions
         if (this->analog_flag){ // Check if new messages from both topics arrived
             // Map analog read to angles
+
             joint_msg = remapper.analog2angles(analog_msg);
 
             // Merge and publish the joint states
             joint_pub.publish(joint_msg);
 
-            // drop flag to get a new msg
+            // // drop flag to get a new msg
             analog_flag = false;
         }
 
