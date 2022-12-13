@@ -7,6 +7,6 @@ int main(int argc, char **argv)
 {
     ros::init(argc,argv,"ServoControlNode");
     ros::NodeHandle nh;
-    SpeedController obj(nh);
+    SpeedController Speed_Controller(nh);
     
 }
