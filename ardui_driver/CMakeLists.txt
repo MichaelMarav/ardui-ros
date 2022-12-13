@@ -36,10 +36,6 @@ add_library(ardui_driver
 )
 
 # PYTHON scripts
-catkin_install_python(PROGRAMS scripts/dummy_pub.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
 catkin_install_python(PROGRAMS scripts/initialize_servos.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
