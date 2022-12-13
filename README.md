@@ -1,4 +1,4 @@
-# Arduino ROS driver
+# Servo Speed Control & Arduino ROS driver
 This package contains a ROS driver for microcontrollers and mulitple servo-motor speed control. The microcontroller script publishes the analog feedback (mV) and the remapper class handles all necessary mappings.
 
 # Installation
