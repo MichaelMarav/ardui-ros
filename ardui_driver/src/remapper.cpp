@@ -75,8 +75,7 @@ void Remapper::GoalAngles2micro(ardui_msgs::GoalStates & msg)
  */
 void Remapper::JointAngles2micro(ardui_msgs::JointStates & msg)
 {
-    int N = this->NUM_SERVOS;
-    for (int i = 0 ; i < N ; ++i){
+    for (int i = 0 ; i < this->NUM_SERVOS ; ++i){
         msg.angles[i]  = this->remap(msg.angles[i],angles_min,angles_max,micro_min,micro_max);
     }
 }

@@ -20,6 +20,7 @@ class SpeedController
         ros::Subscriber joint_sub; // To get initial angle of servo
         // Messages
         ardui_msgs::GoalStates goal_msg;
+        ardui_msgs::GoalStates prev_goal_msg;
 
         ardui_msgs::JointStates joint_msg;
         ardui_msgs::JointStates initial_joints_msg;
@@ -33,7 +34,7 @@ class SpeedController
 
 
         bool goal_arrived_flag{false};
-        bool joint_states_flag;
+        bool joint_states_flag{false};
         int ros_rate_value;
         int angular_vel;
         

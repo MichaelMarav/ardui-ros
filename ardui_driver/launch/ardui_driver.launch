@@ -1,17 +1,21 @@
 <launch>
+
+
    <arg name="port" default="/dev/ttyACM0" /> <!-- Define port name for udev-->
    <node name="rosserial_python_node" pkg="rosserial_python" type="serial_node.py" output="screen">
       <param name="port" value="$(arg port)" />
    </node>
 
 
+   
    <rosparam file ="$(find ardui_driver)/config/mappings.yaml" command = "load" />
    <rosparam file ="$(find ardui_driver)/config/ardui_ros_params.yaml" command = "load" />
-   <rosparam file ="$(find ardui_driver)/config/servo_goal_state.yaml" command = "load" />
    
-   
-   <node name= "low_level_feedback" pkg="ardui_driver" type="low_level_feedback" output="screen"/>
+   <node name= "low_level_feedback" pkg="ardui_driver" type="low_level_feedback" output="screen" />
+   <node name= "low_level_control" pkg="ardui_driver" type="low_level_control" output="screen" /> 
 
-   <!-- <node name= "low_level_control" pkg="ardui_driver" type="low_level_control" output="screen" /> -->
+   <node name= "initialize_servos" pkg="ardui_driver" type="initialize_servos.py" output="screen">
+            <rosparam file ="$(find ardui_driver)/config/servo_goal_state.yaml" command = "load" />
+   </node> 
 
 </launch>    

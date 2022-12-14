@@ -1,12 +1,11 @@
 #! /usr/bin/env python3
 import rospy
-from ecattie_msgs.msg import GoalStates
+from ardui_msgs.msg import GoalStates
 import numpy as np
 
 
 
-NUM_SERVOS = 20
-NUM_SERVOS_PER_FOOT = 5
+NUM_SERVOS = 3
 
 
 
@@ -18,7 +17,7 @@ if __name__ == "__main__":
     r = rospy.Rate(1) # 1hz
 
 
-    pub = rospy.Publisher('/ecattie/servo_goal', GoalStates, queue_size=10)
+    pub = rospy.Publisher(publish_topic_name, GoalStates, queue_size=10)
 
     servos = np.arange(NUM_SERVOS)
     
@@ -39,18 +38,9 @@ if __name__ == "__main__":
         servo_vels[i]   = rospy.get_param("/initialize_servos/"+angvel_param_names[i])
 
 
-    for i in range(NUM_SERVOS_PER_FOOT):
-        msg.front_left.goal_angles.append(servo_angles[i])
-        msg.front_left.goal_vels.append(servo_vels[i])
-
-        msg.front_right.goal_angles.append(servo_angles[i+NUM_SERVOS_PER_FOOT])
-        msg.front_right.goal_vels.append(servo_vels[i+NUM_SERVOS_PER_FOOT])
-
-        msg.back_left.goal_angles.append(servo_angles[i + 2*NUM_SERVOS_PER_FOOT])
-        msg.back_left.goal_vels.append(servo_vels[i + 2*NUM_SERVOS_PER_FOOT])
-
-        msg.back_right.goal_angles.append(servo_angles[i+3*NUM_SERVOS_PER_FOOT])
-        msg.back_right.goal_vels.append(servo_vels[i+3*NUM_SERVOS_PER_FOOT])
+    for i in range(NUM_SERVOS):
+        msg.goal_angles.append(servo_angles[i])
+        msg.goal_vels.append(servo_vels[i])
 
     while not rospy.is_shutdown():
         pub.publish(msg)

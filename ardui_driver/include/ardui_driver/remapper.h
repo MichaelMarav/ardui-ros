@@ -27,7 +27,7 @@ class Remapper
 
     
     public:
-        const int NUM_SERVOS{5};
+        const int NUM_SERVOS{3};
 
         // Constructor
         Remapper(ros::NodeHandle nh);

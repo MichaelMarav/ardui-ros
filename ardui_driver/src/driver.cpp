@@ -30,7 +30,7 @@ Driver::Driver(ros::NodeHandle nh):remapper(nh)
  * Description: front teensy analog callback. stores the value and changes the flag
  */
 void Driver::analog_callback(const ardui_msgs::AnalogFeedback::ConstPtr & msg)
-{
+{   
     analog_msg = *msg;
     this->analog_flag = true;
 }
@@ -57,7 +57,7 @@ void Driver::ros_loop()
             joint_pub.publish(joint_msg);
 
             // // drop flag to get a new msg
-            analog_flag = false;
+            this->analog_flag = false;
         }
 
     }   

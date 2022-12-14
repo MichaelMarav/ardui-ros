@@ -17,10 +17,10 @@
  *  SERVO PARAMETERS DEFINITIONS =====> CHANGE THE FOLLOWING FOR DIFFERENT TEENSY
  */
 // --------------------------------------------------------------------------------------------------------------------------------------------
-#define NUM_SERVOS 10
+#define NUM_SERVOS 3
 Servo servo[NUM_SERVOS];
-short int SERVO_PINS[NUM_SERVOS] = {0,1,2,3,4,5,6,7,8,9};    // In the first 5 positions add the left foot servos and on the last 5 the right foot
-uint8_t FEEDBACK_PINS[NUM_SERVOS] = {A9,A8,A7,A6,A5,A4,A3,A2,A1,A0};
+short int SERVO_PINS[NUM_SERVOS] = {0,1,2};
+uint8_t FEEDBACK_PINS[NUM_SERVOS] = {A9,A8,A7};
 // --------------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -129,5 +129,6 @@ void loop()
     nh.spinOnce();
     get_analog_feedback();
     joint_pub.publish(&feedback_msg);
+    delay(1);
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------

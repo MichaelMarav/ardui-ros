@@ -18,7 +18,6 @@ SpeedController::SpeedController(ros::NodeHandle nh):remapper(nh)
     // Ros::rate (Unusable for now (let it run at max speed)
     nh.getParam("/ros_rate",ros_rate_value);
 
-
     // Publishers
     microgoal_pub = nh.advertise<ardui_msgs::ServoCommand>(pub_micro_topic,1);
     // Subscribers
@@ -46,6 +45,11 @@ void SpeedController::initialize_messages()
     this->goal_msg.goal_angles.resize(N);
     this->goal_msg.goal_vels.resize(N);
     
+    this->prev_goal_msg.goal_angles.resize(N);
+    this->prev_goal_msg.goal_vels.resize(N);
+    for (int i = 0 ; i < N ; ++i){
+        prev_goal_msg.goal_angles[i] = 1; // Initilize with an impossible value
+    }
 
     // Initialize previous goal message (with values because when you want to go to zero you got a problem)
    
@@ -73,8 +77,16 @@ void SpeedController::initialize_messages()
  */
 void SpeedController::servo_goal_callback(const ardui_msgs::GoalStates & msg)
 {   
-    goal_msg = msg;
-    goal_arrived_flag = true;
+    for (int i = 0 ; i < remapper.NUM_SERVOS ;++i){
+        if (msg.goal_angles[i] != prev_goal_msg.goal_angles[i]){
+            prev_goal_msg = msg;
+            goal_msg = msg;
+            this->goal_arrived_flag = true;
+            std::cout << "GOT GOAL\n";
+            return;
+        }
+    }
+    // goal_arrived_flag = false;
 }
 
 
@@ -86,92 +98,94 @@ void SpeedController::servo_goal_callback(const ardui_msgs::GoalStates & msg)
 void SpeedController::joint_states_callback(const ardui_msgs::JointStates::ConstPtr & msg)
 {
     joint_msg = *msg; // Save initial angle of servos ( use joint_msg and not initial_joint_msg) as a placeholder for implementing the closed loop
-    joint_states_flag = true;
+    if (joint_msg.header.seq > 0){
+        this->joint_states_flag = true;
+    }
 }
 
 
 /*
  * Main ros loop
  */
-
 void SpeedController::ros_loop()
 {
-
-
     // ros::Time t1,t2;
     while (ros::ok()){
         ros::spinOnce();
-
-        if (goal_arrived_flag && joint_states_flag){
+        
+        if (this->goal_arrived_flag && this->joint_states_flag){
             // Individual flag for every servo to check if goal is achieved
-            std::vector<bool> arrived_flag(remapper.NUM_SERVOS,false);
+            std::vector<bool> goal_achieved_flag(remapper.NUM_SERVOS,false);
+            std::cout << "GOT IN \n";
+            // Drop subscription flags
+            this->goal_arrived_flag = false;
+            this->joint_states_flag = false;
 
-
-
-            // Drop flags
-            goal_arrived_flag = false;
-            joint_states_flag = false;
-
-            // Converts the angles to microseconds
-            remapper.GoalAngles2micro(goal_msg);
-
-            // Convert JointAngles to Micro to get initial position
-            remapper.JointAngles2micro(joint_msg);
 
             // Initial angles of servos in microseconds
             initial_joints_msg = joint_msg;
 
+
+            // Convert JointAngles to Micro to get initial position
+            for (int i = 0 ;  i < 3 ; ++i){
+             std::cout << "degree aNGELS " << joint_msg.angles[i] << '\n';
+
+            }
+            remapper.JointAngles2micro(initial_joints_msg);
+            for (int i = 0 ;  i < 3 ; ++i){
+             std::cout << "INITIAL_ ANGELS " << initial_joints_msg.angles[i] << '\n';
+
+            }
+
+
+            // Converts the angles to microseconds
+            remapper.GoalAngles2micro(goal_msg);
+
+
             // Fix the rotational speed sign for every servo && save the initial position
             for (int i = 0 ; i < remapper.NUM_SERVOS ; ++i){
 
-                if (joint_msg.angles[i] > final_pos_msg.micro_command[i]){
+                if (initial_joints_msg.angles[i] > goal_msg.goal_angles[i]){
                     goal_msg.goal_vels[i] *= -1.;
                 }
+
+                microgoal_msg.micro_command[i] = initial_joints_msg.angles[i];
             }
             
 
 
-
-
+     
 
             double t1 = ros::Time::now().toSec();
             while (ros::ok()){
 
                 ros::spinOnce();
-                // If new goal arrived break the loop and start planning again
-                if (goal_arrived_flag){ 
-                    ROS_INFO("Replanning.. New goal arrived\n");
-                    break;
-                }
-
-
-
+                // std::cout << "WHEREAMI -> " << joint_msg.angles[0] << "  "<< joint_msg.angles[1] << "  "<< joint_msg.angles[2] << "\n" ;
                 double t2 = ros::Time::now().toSec();
                 for (int i = 0 ; i < remapper.NUM_SERVOS ; ++i){        
                     // micro_goal = dt*w + start_angles
-                    // Don't comput new message if the goal is achieved for each servo
-                    if (( goal_msg.goal_vels[i] > 0 && microgoal_msg.micro_command[i] < final_pos_msg.micro_command[i]) 
-                       || (goal_msg.goal_vels[i] < 0 && microgoal_msg.micro_command[i] > final_pos_msg.micro_command[i]) ) {
+                    // Don't compute new message if the goal is achieved for each servo
+                    if (( goal_msg.goal_vels[i] > 0 && microgoal_msg.micro_command[i] < goal_msg.goal_angles[i]) 
+                       || (goal_msg.goal_vels[i] < 0 && microgoal_msg.micro_command[i] > goal_msg.goal_angles[i]) ) {
                         microgoal_msg.micro_command[i]  = std::round( (t2-t1)*goal_msg.goal_vels[i]  + initial_joints_msg.angles[i]   );
                     }else{
-                        arrived_flag[i] = true; 
+                        goal_achieved_flag[i] = true; 
                     }
                    
                 }
-
+                // std::cout << "PUBLISHING --> " << microgoal_msg.micro_command[0] << "  " << microgoal_msg.micro_command[1] << "  " << "  " << microgoal_msg.micro_command[2] <<'\n'; 
                 microgoal_pub.publish(microgoal_msg);
 
                 // Condition to stop for ardui
-                if (std::all_of(arrived_flag.cbegin(),arrived_flag.cend(),[](bool i){return i;}))
+                if (std::all_of(goal_achieved_flag.cbegin(),goal_achieved_flag.cend(),[](bool i){return i;}))
                 {
                     ROS_INFO("-- GOAL ACHIVED --\n Total Elapsed time: %f",t2-t1);
-                    // std::cout << "Total elapsed time  = " << t2 - t1 << '\n';
                     break;
                 }
                 
 
                 
-                this->loop_rate.sleep(); // If not used, the communication with teensy breaks
+                this->loop_rate.sleep();
             }
             
             
