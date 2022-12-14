@@ -2,11 +2,11 @@
 # angular_velocity:  degrees per sec
 
 # Front Left:
-servo0: 90
+servo0: 0
 w0 : 30
-servo1: 90
+servo1: 0
 w1 : 30
-servo2: 90
+servo2: 0
 w2 : 30
 servo3: 0
 w3 : 30
