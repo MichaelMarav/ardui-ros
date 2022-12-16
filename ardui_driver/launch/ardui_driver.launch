@@ -15,7 +15,7 @@
    <node name= "low_level_control" pkg="ardui_driver" type="low_level_control" output="screen" /> 
 
    <node name= "initialize_servos" pkg="ardui_driver" type="initialize_servos.py" output="screen">
-            <rosparam file ="$(find ardui_driver)/config/servo_goal_state.yaml" command = "load" />
+            <rosparam file ="$(find ardui_driver)/config/initial_state.yaml" command = "load" />
    </node> 
 
 </launch>    
