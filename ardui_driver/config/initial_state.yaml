@@ -1,0 +1,50 @@
+# Initial angles & angular_velocity for servos (place holder)to achieve
+# angular_velocity:  degrees per sec
+
+# Front Left:
+servo0: 0
+w0 : 30
+servo1: 0
+w1 : 30
+servo2: 0
+w2 : 30
+servo3: 0
+w3 : 30
+servo4: 0
+w4 : 30
+
+# Front Right
+servo5: 0
+w5 : 30
+servo6: 0
+w6 : 30
+servo7: 0
+w7 : 30
+servo8: 0
+w8 : 30
+servo9: 0
+w9 : 30
+
+# Back Left:
+servo10: 0
+w10 : 30
+servo11: 0
+w11 : 30
+servo12: 0
+w12 : 30
+servo13: 0
+w13 : 30
+servo14: 0
+w14 : 30
+
+# Back Right
+servo15: 0
+w15 : 30
+servo16: 0
+w16 : 30
+servo17: 0
+w17 : 30
+servo18: 0
+w18 : 30
+servo19: 0
+w19 : 30
