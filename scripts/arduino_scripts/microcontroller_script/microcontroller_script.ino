@@ -129,6 +129,6 @@ void loop()
     nh.spinOnce();
     get_analog_feedback();
     joint_pub.publish(&feedback_msg);
-    delay(1);
+    delayMicroseconds(700);
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------

@@ -116,7 +116,6 @@ void SpeedController::ros_loop()
         if (this->goal_arrived_flag && this->joint_states_flag){
             // Individual flag for every servo to check if goal is achieved
             std::vector<bool> goal_achieved_flag(remapper.NUM_SERVOS,false);
-            std::cout << "GOT IN \n";
             // Drop subscription flags
             this->goal_arrived_flag = false;
             this->joint_states_flag = false;
@@ -127,15 +126,7 @@ void SpeedController::ros_loop()
 
 
             // Convert JointAngles to Micro to get initial position
-            for (int i = 0 ;  i < 3 ; ++i){
-             std::cout << "degree aNGELS " << joint_msg.angles[i] << '\n';
-
-            }
             remapper.JointAngles2micro(initial_joints_msg);
-            for (int i = 0 ;  i < 3 ; ++i){
-             std::cout << "INITIAL_ ANGELS " << initial_joints_msg.angles[i] << '\n';
-
-            }
 
 
             // Converts the angles to microseconds
@@ -157,12 +148,16 @@ void SpeedController::ros_loop()
      
 
             double t1 = ros::Time::now().toSec();
-            while (ros::ok()){
+            double t2 = ros::Time::now().toSec();
 
-                ros::spinOnce();
+            while (!std::all_of(goal_achieved_flag.cbegin(),goal_achieved_flag.cend(),[](bool i){return i;})){
+
+                // ros::spinOnce();
                 // std::cout << "WHEREAMI -> " << joint_msg.angles[0] << "  "<< joint_msg.angles[1] << "  "<< joint_msg.angles[2] << "\n" ;
-                double t2 = ros::Time::now().toSec();
-                for (int i = 0 ; i < remapper.NUM_SERVOS ; ++i){        
+                for (int i = 0 ; i < remapper.NUM_SERVOS ; ++i){      
+
+                    t2 = ros::Time::now().toSec();
+  
                     // micro_goal = dt*w + start_angles
                     // Don't compute new message if the goal is achieved for each servo
                     if (( goal_msg.goal_vels[i] > 0 && microgoal_msg.micro_command[i] < goal_msg.goal_angles[i]) 
@@ -173,22 +168,14 @@ void SpeedController::ros_loop()
                     }
                    
                 }
-                // std::cout << "PUBLISHING --> " << microgoal_msg.micro_command[0] << "  " << microgoal_msg.micro_command[1] << "  " << "  " << microgoal_msg.micro_command[2] <<'\n'; 
                 microgoal_pub.publish(microgoal_msg);
 
-                // Condition to stop for ardui
-                if (std::all_of(goal_achieved_flag.cbegin(),goal_achieved_flag.cend(),[](bool i){return i;}))
-                {
-                    ROS_INFO("-- GOAL ACHIVED --\n Total Elapsed time: %f",t2-t1);
-                    break;
-                }
-                
 
                 
                 this->loop_rate.sleep();
             }
-            
-            
+            ROS_INFO("-- GOAL ACHIVED --\n Total Elapsed time: %f",t2-t1);
+
         } 
     }
 }

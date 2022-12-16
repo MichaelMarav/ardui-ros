@@ -6,13 +6,13 @@
 '''
 
 import rospy
-from ecattie_msgs.msg import GoalStates
+from ardui_msgs.msg import GoalStates
 
 
 
 # Set the desired angles and vels
-desired_angles=[ 90 ,120,150]
-desired_vels  = [30,30,30]
+desired_angles=[ 280 ,280,280]
+desired_vels  = [10,20,30]
 
 
 if __name__ == "__main__":

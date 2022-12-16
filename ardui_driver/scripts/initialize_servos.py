@@ -48,9 +48,11 @@ if __name__ == "__main__":
         msg.goal_angles.append(servo_angles[i])
         msg.goal_vels.append(servo_vels[i])
 
-    while not rospy.is_shutdown():
-        pub.publish(msg)
+    while (pub.get_num_connections() == 0):
         r.sleep()
+
+    pub.publish(msg)
+    r.sleep()
 
 
 

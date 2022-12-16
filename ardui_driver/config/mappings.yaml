@@ -3,8 +3,8 @@
 analog_min: 976
 analog_max: 73
 
-micro_min: 500
-micro_max: 2400
+micro_min: 550
+micro_max: 2300
 
 angles_min: 0
 angles_max: 300
