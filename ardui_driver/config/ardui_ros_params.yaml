@@ -3,3 +3,4 @@ subgoal_topic: "/teensy/microgoal" # Send subgoal in microsecods (servo speed co
 joint_states_topic: "/servo/JointStates"
 servo_goal_topic: "/servo/servo_goal"       # Publish the desired angle (in degrees) of every servo
 ros_rate: 1000 # hz 
+num_servos: 3
