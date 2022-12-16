@@ -11,13 +11,15 @@ from ardui_msgs.msg import GoalStates
 import numpy as np
 
 
-NUM_SERVOS = 3
 
 if __name__ == "__main__":
     rospy.init_node('Initializer')
 
 
     publish_topic_name = rospy.get_param("/servo_goal_topic")
+    NUM_SERVOS = rospy.get_param("/num_servos")
+
+    
     r = rospy.Rate(1) # 1hz
     pub = rospy.Publisher(publish_topic_name, GoalStates, queue_size=10)
     servos = np.arange(NUM_SERVOS)
