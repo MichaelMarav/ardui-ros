@@ -1,5 +1,9 @@
 # Servo Speed Control & Arduino ROS driver
-This package contains a ROS driver for microcontrollers and mulitple servo-motor speed control. The microcontroller script publishes the analog feedback (mV) and the remapper class handles all necessary mappings.
+This package contains a ROS driver for microcontrollers and mulitple servo-motor speed control. The microcontroller script publishes the analog feedback (mV) and the remapper class handles all necessary mappings. In the following video the goal is for each servo to achieve the same position but with different speeds.
+
+
+https://user-images.githubusercontent.com/59025730/208120092-7d8511d5-25ff-4ddf-b694-06f7a18ccb49.mp4
+
 
 # Installation
 
@@ -65,9 +69,8 @@ $ source <workspace_name>/devel/setup.bash
 Go to *scripts/shell_scripts/*
 and run:
 ```
-$ ./build_rosmsgs.sh
+./build_rosmsgs.sh
 ```
-Follow the instructions to make sure that the custom messages are actually built under the correct folder.
 If you don't want to do it automatically follow the tutorial below:
 
 ```
@@ -84,7 +87,7 @@ $ rm -rf ~/Arduino/libraries/ros_lib/
 ```
 
 
-(In case you run into any problems run this too and repeat the process):
+(Don't think this is necessary but in case of any problems run this too and repeat the process):
 ```
 $ rosrun rosserial_client make_library.py ~/Arduino/libraries <package_with_msgs>
 ```
