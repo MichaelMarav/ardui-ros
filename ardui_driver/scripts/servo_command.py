@@ -1,24 +1,33 @@
 #! /usr/bin/env python3 
 
-import rospy
-from std_msgs.msg import String
 
+'''
+    Script that publishes the final desired angles of the servo motors in degrees 
+'''
+
+import rospy
 from ecattie_msgs.msg import GoalStates
-from ecattie_msgs.msg import JointStates
+
+
+
+# Set the desired angles and vels
+desired_angles=[ 90 ,120,150]
+desired_vels  = [30,30,30]
+
 
 if __name__ == "__main__":
     rospy.init_node('simple_node',anonymous=True)
-    # msg_n = GoalStates()
-    # msg_n.front_left.goal_angle.append(5)
+    rate = rospy.Rate(1)
 
-    # pub = rospy.Publisher("test_topic",GoalStates,queue_size=1)
-    # # msg = JointState()
-    rate = rospy.Rate(50)
-    # i = 0
-    # while not rospy.is_shutdown():
-    #     pub.publish(msg_n)
-    #     rate.sleep()
+    goal_pub = rospy.Publisher("/servo/servo_goal",GoalStates,queue_size=1)
+    goal_msg = GoalStates()
+
+    for i in range(len(desired_angles)):
+        goal_msg.goal_angles.append(desired_angles[i])
+        goal_msg.goal_vels.append(desired_vels[i])
+
+
+
     while not rospy.is_shutdown():
-        msg = rospy.wait_for_message("joint_states",JointStates)
-        print(msg.front_left.angle)
+        goal_pub.publish(goal_msg)
         rate.sleep()
