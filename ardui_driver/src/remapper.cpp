@@ -19,7 +19,8 @@ Remapper::Remapper(ros::NodeHandle nh)
     nh.getParam("/micro_max",micro_max);
 
 
-
+    nh.getParam("/num_servos", NUM_SERVOS);
+    
     // Allocate memory to messages 
     joint_msg.angles.resize(this->NUM_SERVOS);
 
