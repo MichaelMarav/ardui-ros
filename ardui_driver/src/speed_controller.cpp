@@ -95,7 +95,7 @@ void SpeedController::servo_goal_callback(const ardui_msgs::GoalStates & msg)
 
 
 /*
- * Joint states Callback, PLACEHOLDER: use joint_msg for closed loop control 
+ * Joint states Callback, PLACEHOLDER: use joint_msg for feedback  control 
  */
 void SpeedController::joint_states_callback(const ardui_msgs::JointStates::ConstPtr & msg)
 {
