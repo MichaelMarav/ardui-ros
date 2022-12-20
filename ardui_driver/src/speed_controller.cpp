@@ -20,9 +20,11 @@ SpeedController::SpeedController(ros::NodeHandle nh):remapper(nh)
 
     // Publishers
     microgoal_pub = nh.advertise<ardui_msgs::ServoCommand>(pub_micro_topic,1);
+    
     // Subscribers
     servo_goal_sub = nh.subscribe(sub_goal_topic,1,&SpeedController::servo_goal_callback,this);
     joint_sub      = nh.subscribe(sub_joint_topic,1,&SpeedController::joint_states_callback,this);
+
     // Define loop_rate
     loop_rate = ros::Rate(ros_rate_value);    
 
@@ -39,19 +41,20 @@ SpeedController::SpeedController(ros::NodeHandle nh):remapper(nh)
 void SpeedController::initialize_messages()
 {
 
-    // TODO: Check if header is required for these messages
     int N = remapper.NUM_SERVOS;
+
     // Initialize goal msg
     this->goal_msg.goal_angles.resize(N);
     this->goal_msg.goal_vels.resize(N);
-    
+
+
+    // Initialize previous goal message (with values because when you want to go to zero you got a problem)    
     this->prev_goal_msg.goal_angles.resize(N);
     this->prev_goal_msg.goal_vels.resize(N);
     for (int i = 0 ; i < N ; ++i){
         prev_goal_msg.goal_angles[i] = 1; // Initilize with an impossible value
     }
 
-    // Initialize previous goal message (with values because when you want to go to zero you got a problem)
    
     // Initialize final goal for front and back teensys
     this->final_pos_msg.micro_command.resize(N);
@@ -82,11 +85,10 @@ void SpeedController::servo_goal_callback(const ardui_msgs::GoalStates & msg)
             prev_goal_msg = msg;
             goal_msg = msg;
             this->goal_arrived_flag = true;
-            std::cout << "GOT GOAL\n";
+            ROS_INFO("NEW GOAL ARRIVED");
             return;
         }
     }
-    // goal_arrived_flag = false;
 }
 
 
@@ -109,7 +111,6 @@ void SpeedController::joint_states_callback(const ardui_msgs::JointStates::Const
  */
 void SpeedController::ros_loop()
 {
-    // ros::Time t1,t2;
     while (ros::ok()){
         ros::spinOnce();
         
@@ -152,8 +153,6 @@ void SpeedController::ros_loop()
 
             while (!std::all_of(goal_achieved_flag.cbegin(),goal_achieved_flag.cend(),[](bool i){return i;})){
 
-                // ros::spinOnce();
-                // std::cout << "WHEREAMI -> " << joint_msg.angles[0] << "  "<< joint_msg.angles[1] << "  "<< joint_msg.angles[2] << "\n" ;
                 for (int i = 0 ; i < remapper.NUM_SERVOS ; ++i){      
 
                     t2 = ros::Time::now().toSec();
